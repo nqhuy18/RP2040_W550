@@ -1,5 +1,4 @@
 #include "opt3101.h"
-#include "pico/stdlib.h"
 static opt3101_dev opt3101;
 static uint8_t opt3101_addr = OPT3101_CHIP_ADDR;
 
@@ -12,7 +11,7 @@ int main(void) {
   opt3101.write = &i2cSensorsWrite;
   opt3101.millis = pico_millis;
   opt3101.delay = sleep_ms;
-  int rslt = opt3101Init(&opt3101);
+  rslt = opt3101Init(&opt3101);
   
   rslt |= opt3101SetFrameTiming(&opt3101, 256);
   rslt |= opt3101SetChannel(&opt3101, 1);
@@ -21,7 +20,7 @@ int main(void) {
   while (1)
   {
     rslt = opt3101Sample(&opt3101);
-    DEBUG_PRINT("%d %d\n", rslt, opt3101.distanceMillimeters);
+    //DEBUG_PRINT("%d %d\n", rslt, opt3101.distanceMillimeters);
     sleep_ms(1000);
   }
   //...

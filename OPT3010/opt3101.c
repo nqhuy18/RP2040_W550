@@ -7,14 +7,14 @@ uint16_t pico_millis(void) {
 int8_t i2cSensorsRead(uint8_t regAddr, uint8_t *regData, uint32_t len, void *intfPtr) {
 	int status;	 //huy
 	uint16_t DevAddress = *(uint8_t*)intfPtr << 1;
-	i2c_write_blocking(i2c_default, DevAddress, &regAddr, 1, false);				//huy
-	status = i2c_read_blocking(i2c_default, DevAddress, regData, len, false);       //huy
+	i2c_write_blocking(i2c_port, DevAddress, &regAddr, 1, false);				//huy
+	status = i2c_read_blocking(i2c_port, DevAddress, regData, len, false);       //huy
 	// osSemaphoreAcquire(sensorI2C.i2cRxDmaSemaphore, osWaitForever);
 	/**
 	 * HAL_StatusTypeDef: 0, 1, 2, 3
 	 * BMI08X_INTF_RET_TYPE: 0, -1, -2, ..., -9
 	 */
-	return -status;
+	return status;
 }
 
 /*! @brief Sensor I2C write function */
@@ -25,8 +25,8 @@ int8_t i2cSensorsWrite(uint8_t regAddr, const uint8_t *regData, uint32_t len, vo
 	memset(sBuffer, 0, 32);
 	sBuffer[0] = regAddr;
 	memcpy(sBuffer + 1, regData, len);
-	status = i2c_write_blocking(i2c_default, DevAddress, sBuffer, len + 1, false);    //huy
-	return -status;
+	status = i2c_write_blocking(i2c_port, DevAddress, sBuffer, len + 1, false);    //huy
+	return status;
 }
 
 int8_t opt3101ResetAndWait(opt3101_dev* dev) {
@@ -45,7 +45,7 @@ int8_t opt3101ResetAndWait(opt3101_dev* dev) {
 	// loading settings from its EEPROM.
 	uint32_t data;
 	do {
-		sleep(5); 	//huy
+		sleep_ms(5); 	//huy
 		rslt |= opt3101ReadReg(dev, 3, &data);
 		if (rslt) return rslt;
 	} while (!(data & (1 << 8)));
@@ -293,7 +293,7 @@ int8_t opt3101EnableDataReadyOutput(opt3101_dev* dev, uint8_t gpPin) {
 }
 
 void i2c_init_default() {
-	i2c_init(i2c_default, 100 * 1000);
+	i2c_init(i2c_port, 100 * 1000);
     gpio_set_function(PICO_DEFAULT_I2C_SDA_PIN, GPIO_FUNC_I2C);
     gpio_set_function(PICO_DEFAULT_I2C_SCL_PIN, GPIO_FUNC_I2C);
     gpio_pull_up(PICO_DEFAULT_I2C_SDA_PIN);

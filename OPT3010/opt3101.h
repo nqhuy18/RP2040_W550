@@ -10,9 +10,11 @@ extern "C" {
 #include <string.h>
 #include "pico/time.h"
 #include "hardware/i2c.h"
+#include "pico/stdlib.h"
+#include "hardware/gpio.h"
+#include "pico/binary_info.h"
 
-
-#define i2c_default i2c0
+#define i2c_port i2c0
 #define PICO_DEFAULT_I2C_SDA_PIN 4
 #define PICO_DEFAULT_I2C_SCL_PIN 5
 
@@ -79,6 +81,7 @@ int8_t i2cSensorsWrite(uint8_t regAddr, const uint8_t *regData, uint32_t len, vo
 
 
 void i2c_init_default();
+uint16_t pico_millis(void);
 #ifdef __cplusplus
 }
 #endif
